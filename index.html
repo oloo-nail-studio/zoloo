@@ -1,1 +1,215 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zoloo Nail Studio — Цаг авах</title>
+<meta name="description" content="Zoloo Nail Studio — маникюр, педикюрийн цаг онлайнаар аваарай.">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fdf2f4;--card:#fff;--ink:#3b1e2b;--muted:#7a5a68;--line:#f0d3dc;--accent:#c2185b;--accent-ink:#fff;--soft:#f9dfe6;--ok:#2e6b4f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,sans-serif;font-size:17px;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--accent)}
+.wrap{max-width:560px;margin:0 auto;padding:20px 18px 120px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 18px}
+.brand{font-family:'Unbounded',sans-serif;font-weight:700;font-size:24px;line-height:1;color:var(--accent)}
+.brand small{display:block;font-family:'Nunito',sans-serif;font-weight:600;font-size:13px;color:var(--muted);margin-top:6px}
+.call{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;font-weight:800;font-size:15px}
+h1{font-family:'Unbounded',sans-serif;font-weight:700;font-size:32px;line-height:1.1;margin:8px 0 6px}
+.lead{margin:0 0 22px;color:var(--muted)}
+.progress{display:flex;gap:6px;margin-bottom:22px}
+.progress span{flex:1;height:6px;border-radius:6px;background:var(--line)}
+.progress span.on{background:var(--accent)}
+.step{display:none}.step.active{display:block}
+h2{font-size:21px;font-weight:800;margin:0 0 14px}
+h3{font-size:15px;font-weight:800;color:var(--muted);margin:18px 0 8px}
+.list{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:14px 18px;min-height:64px;border-radius:18px;border:2px solid var(--line);background:var(--card)}
+.opt b{display:block;font-weight:800}
+.opt span{color:var(--muted);font-size:14px}
+.opt .price{font-weight:800;color:var(--accent);white-space:nowrap;font-size:15px}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--soft)}
+.days{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.day{padding:12px 4px;min-height:72px;border-radius:16px;border:2px solid var(--line);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.day small{font-size:12px;color:var(--muted);font-weight:600}
+.day b{font-size:20px;font-weight:800;line-height:1.1}
+.day[aria-pressed="true"],.time[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.day[aria-pressed="true"] small{color:var(--accent-ink)}
+.day:disabled{opacity:.4;text-decoration:line-through}
+.times{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.time{min-height:54px;border-radius:14px;border:2px solid var(--line);background:var(--card);font-weight:800}
+.time:disabled{opacity:.35}
+.empty,.loading{grid-column:1/-1;padding:18px;border-radius:16px;background:var(--soft)}
+label{display:block;font-weight:800;margin:0 0 6px;font-size:15px}
+input{width:100%;font:inherit;font-size:18px;color:var(--ink);padding:14px 16px;min-height:56px;border-radius:14px;border:2px solid var(--line);background:var(--card)}
+input:focus{border-color:var(--accent);outline:none}
+.field{margin-bottom:16px}
+.hint{font-size:14px;color:var(--muted);margin-top:6px}
+.err{font-size:14px;color:#b3261e;margin-top:6px;display:none;font-weight:700}
+.summary{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:6px 18px;margin:0 0 18px}
+.summary div{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.summary div:last-child{border-bottom:none}
+.summary dt{color:var(--muted)}.summary dd{margin:0;font-weight:800;text-align:right}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:58px;border-radius:999px;border:none;font-weight:800;font-size:17px}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:var(--card);border:2px solid var(--line)}
+.btn:disabled{opacity:.45}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 18px}
+.bar .in{max-width:560px;margin:0 auto;display:flex;gap:10px}
+.bar .back{flex:0 0 58px}
+.done{text-align:center;padding:20px 0}
+.tick{width:72px;height:72px;border-radius:50%;background:var(--soft);display:grid;place-items:center;margin:0 auto 14px;color:var(--ok);font-size:36px;font-weight:800}
+.formerr{display:none;padding:14px 16px;border-radius:14px;background:var(--soft);font-weight:700;margin-bottom:14px}
+.info{margin-top:28px;padding:18px;border-radius:20px;background:var(--card);border:2px solid var(--line);font-size:15px}
+.info p{margin:0 0 10px}.info p:last-child{margin:0}
+.info b{display:block;font-size:13px;color:var(--muted)}
+.note{font-size:14px;color:var(--muted);margin:12px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">zoloo<small>nail studio</small></div>
+    <a class="call" href="tel:80434999">📞 Залгах</a>
+  </header>
+  <h1>Цаг авах</h1>
+  <p class="lead" id="lead">4 алхамд 1 минут. Бүртгүүлэх шаардлагагүй.</p>
+  <div class="progress"><span></span><span></span><span></span><span></span></div>
+
+  <section class="step active" data-step="1">
+    <h2>1. Юу хийлгэх вэ?</h2>
+    <h3>Маникюр</h3><div class="list" id="mani"></div>
+    <h3>Педикюр</h3><div class="list" id="pedi"></div>
+    <p class="note">Зурлага, шигтгээ (нэг хумс 3–5к) нэмэлтээр хийнэ.</p>
+    <div class="info">
+      <p><b>Хаяг</b>Шидэт Далавч салон, ТБД Андуудын зүүн талд, Старс Центр 4 давхар</p>
+      <p><b>Утас</b><a href="tel:80434999">8043 4999</a> · <a href="tel:96144041">9614 4041</a></p>
+    </div>
+  </section>
+  <section class="step" data-step="2"><h2>2. Аль өдөр?</h2><div class="days" id="days"></div></section>
+  <section class="step" data-step="3"><h2>3. Хэдэн цагт?</h2><div class="times" id="times"></div></section>
+  <section class="step" data-step="4">
+    <h2>4. Таны нэр, утас</h2>
+    <div class="formerr" id="formErr" role="alert"></div>
+    <dl class="summary" id="summary"></dl>
+    <div class="field"><label for="name">Нэр</label><input id="name" type="text" placeholder="Жишээ нь: Сараа" maxlength="60"><div class="err" id="nameErr">Нэрээ бичнэ үү.</div></div>
+    <div class="field"><label for="phone">Утасны дугаар</label><input id="phone" type="tel" inputmode="numeric" placeholder="9911 2233" maxlength="9"><div class="hint">Бид энэ дугаар руу залгаж баталгаажуулна.</div><div class="err" id="phoneErr">8 оронтой дугаар бичнэ үү.</div></div>
+  </section>
+  <section class="step" data-step="5">
+    <div class="done"><div class="tick">✓</div><h2 style="margin-bottom:4px">Цаг авлаа!</h2><p style="margin:0;color:var(--muted)">Бид удахгүй залгаж баталгаажуулна.<br>Цагаа цуцлах, өөрчлөх бол <a href="tel:80434999">8043 4999</a> дугаарт залгана уу.</p></div>
+    <dl class="summary" id="summaryDone"></dl>
+    <button class="btn ghost" id="againBtn" type="button">Өөр цаг авах</button>
+    <div class="info">
+      <p><b>Хаяг</b>Шидэт Далавч салон, ТБД Андуудын зүүн талд, Старс Центр 4 давхар</p>
+      <p><b>Утас</b><a href="tel:80434999">8043 4999</a> · <a href="tel:96144041">9614 4041</a></p>
+    </div>
+  </section>
+</div>
+<div class="bar" id="bar"><div class="in">
+  <button class="btn ghost back" id="back" type="button" aria-label="Буцах">‹</button>
+  <button class="btn primary" id="next" type="button" disabled>Үргэлжлүүлэх</button>
+</div></div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbyNaaPe69h_lLdnyV3Yutj9TmQfpsKp88q0lIiJ0tfZiRx6eKhOM4ymzOTVlv-DBPZi/exec";
+const STUDIO = { phone:"80434999", open:10, close:20, closedDays:[], daysAhead:12, step:30 };
+const SERVICES = [
+  { id:"m1",  g:"mani", name:"Энгийн маникюр",           price:"20к",     mins:45 },
+  { id:"m4",  g:"mani", name:"Энгийн гель будалт",       price:"35к–38к", mins:60 },
+  { id:"m5",  g:"mani", name:"Гоёлын гель будалт",       price:"45к–55к", mins:90 },
+  { id:"m6",  g:"mani", name:"Смарт (энгийн будалттай)", price:"65к",     mins:90 },
+  { id:"m7",  g:"mani", name:"Смарт гоёлын будалттай",   price:"85к–95к", mins:120 },
+  { id:"m11", g:"mani", name:"Перэнч будалт",            price:"45к",     mins:75 },
+  { id:"m12", g:"mani", name:"Усалттай будалт",          price:"45к",     mins:75 },
+  { id:"m2",  g:"mani", name:"Арилгалт",                 price:"10к",     mins:20 },
+  { id:"m3",  g:"mani", name:"Хумс салгалт",             price:"20к",     mins:30 },
+  { id:"m8",  g:"mani", name:"Нөхөлт (1ш)",              price:"8к",      mins:15 },
+  { id:"p1",  g:"pedi", name:"Спа + педикюр (будалтгүй)",    price:"50к", mins:60 },
+  { id:"p2",  g:"pedi", name:"Спа + педикюр (энгийн будалт)", price:"65к", mins:90 }
+];
+const WD=["Ням","Дав","Мяг","Лха","Пүр","Баа","Бям"];
+const state={step:1,service:null,day:null,time:null,busy:[],capacity:1,sending:false};
+const $=s=>document.querySelector(s);
+const pad=n=>String(n).padStart(2,"0");
+const keyOf=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const dateOf=k=>{const[y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d)};
+const svc=()=>SERVICES.find(s=>s.id===state.service);
+const fmtDur=m=>m>=60?(Math.floor(m/60)+" цаг"+(m%60?" "+(m%60)+" мин":"")):m+" мин";
+const fmtDate=d=>(d.getMonth()+1)+"-р сарын "+d.getDate()+" ("+WD[d.getDay()]+")";
+function pick(fn){fn();update();setTimeout(()=>go(1),180)}
+
+function renderServices(){$("#mani").innerHTML="";$("#pedi").innerHTML="";
+  SERVICES.forEach(s=>{const b=document.createElement("button");b.type="button";b.className="opt";
+    b.setAttribute("aria-pressed",state.service===s.id);
+    b.innerHTML='<div><b></b><span></span></div><div class="price"></div>';
+    b.querySelector("b").textContent=s.name;b.querySelector("span").textContent="≈ "+fmtDur(s.mins);
+    b.querySelector(".price").textContent=s.price;
+    b.onclick=()=>pick(()=>{state.service=s.id;state.time=null;renderServices()});
+    $("#"+s.g).appendChild(b)})}
+
+function rawSlots(d){const len=svc()?svc().mins:60,out=[],soon=Date.now()+30*60000;
+  for(let m=STUDIO.open*60;m+len<=STUDIO.close*60;m+=STUDIO.step){
+    const t=new Date(d.getFullYear(),d.getMonth(),d.getDate(),Math.floor(m/60),m%60);
+    out.push({m,label:pad(Math.floor(m/60))+":"+pad(m%60),past:t.getTime()<soon})}return out}
+
+function renderDays(){const box=$("#days");box.innerHTML="";const now=new Date();
+  for(let i=0;i<STUDIO.daysAhead;i++){const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i),key=keyOf(d);
+    const closed=STUDIO.closedDays.includes(d.getDay())||rawSlots(d).every(x=>x.past);
+    const b=document.createElement("button");b.type="button";b.className="day";b.disabled=closed;
+    b.setAttribute("aria-pressed",state.day===key);b.innerHTML="<small></small><b></b><small></small>";
+    const sm=b.querySelectorAll("small");sm[0].textContent=i===0?"Өнөөдөр":i===1?"Маргааш":WD[d.getDay()];
+    b.querySelector("b").textContent=d.getDate();sm[1].textContent=(d.getMonth()+1)+"-р сар";
+    b.onclick=()=>pick(()=>{state.day=key;state.time=null;renderDays()});box.appendChild(b)}}
+
+async function loadBusy(){const box=$("#times");box.innerHTML='<div class="loading">Сул цагийг шалгаж байна…</div>';const day=state.day;
+  try{const r=await fetch(API+"?date="+encodeURIComponent(day));const j=await r.json();
+    if(day!==state.day)return;state.busy=j.busy||[];state.capacity=j.capacity||1;renderTimes()}
+  catch(e){box.innerHTML='<div class="empty">Сул цагийг ачаалж чадсангүй. Дахин оролдоно уу, эсвэл <a href="tel:80434999">8043 4999</a> дугаарт залгаарай.</div>'}}
+
+function renderTimes(){const box=$("#times");box.innerHTML="";const len=svc().mins;
+  const slots=rawSlots(dateOf(state.day)).map(s=>({...s,taken:state.busy.filter(b=>b.start<s.m+len&&s.m<b.end).length>=state.capacity}));
+  if(slots.every(s=>s.past||s.taken)){box.innerHTML='<div class="empty">Энэ өдөр сул цаг үлдсэнгүй. Өөр өдөр сонгоно уу.</div>';return}
+  slots.forEach(s=>{const b=document.createElement("button");b.type="button";b.className="time";b.textContent=s.label;
+    b.disabled=s.past||s.taken;b.setAttribute("aria-pressed",state.time===s.label);
+    b.onclick=()=>pick(()=>{state.time=s.label;renderTimes()});box.appendChild(b)})}
+
+function fillSummary(el,extra){const rows=[["Үйлчилгээ",svc().name],["Үнэ",svc().price],["Өдөр",fmtDate(dateOf(state.day))],["Цаг",state.time]].concat(extra||[]);
+  el.innerHTML="";rows.forEach(([k,v])=>{const div=document.createElement("div"),dt=document.createElement("dt"),dd=document.createElement("dd");
+  dt.textContent=k;dd.textContent=v;div.append(dt,dd);el.appendChild(div)})}
+
+const canNext=()=>!state.sending&&((state.step===1&&state.service)||(state.step===2&&state.day)||(state.step===3&&state.time)||state.step===4);
+
+function update(){document.querySelectorAll(".progress span").forEach((s,i)=>s.classList.toggle("on",i<Math.min(state.step,4)));
+  $("#next").disabled=!canNext();
+  $("#next").textContent=state.sending?"Илгээж байна…":(state.step===4?"Цаг авах":"Үргэлжлүүлэх");
+  $("#back").style.visibility=state.step===1?"hidden":"visible";
+  $("#bar").style.display=state.step===5?"none":"";$("#lead").style.display=state.step===1?"":"none"}
+
+function show(step){state.step=step;if(step===2)renderDays();if(step===3)loadBusy();
+  if(step===4){fillSummary($("#summary"));$("#formErr").style.display="none"}
+  document.querySelectorAll(".step").forEach(s=>s.classList.toggle("active",+s.dataset.step===step));update();window.scrollTo(0,0)}
+
+async function submit(){const name=$("#name").value.trim(),phone=$("#phone").value.trim();
+  const nOk=name.length>0,pOk=phone.replace(/\D/g,"").length===8;
+  $("#nameErr").style.display=nOk?"none":"block";$("#phoneErr").style.display=pOk?"none":"block";
+  if(!nOk||!pOk)return;state.sending=true;update();const fe=$("#formErr");
+  try{const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({date:state.day,time:state.time,mins:svc().mins,service:svc().name,name,phone})});
+    const j=await r.json();state.sending=false;
+    if(j.ok){fillSummary($("#summaryDone"),[["Нэр",name],["Утас",phone]]);show(5);return}
+    if(j.error==="taken"){fe.textContent="Уучлаарай, энэ цагийг дөнгөж сая өөр хүн авчихлаа. Өөр цаг сонгоно уу.";state.time=null;fe.style.display="block";setTimeout(()=>show(3),1800)}
+    else{fe.textContent="Мэдээллээ шалгаад дахин оролдоно уу.";fe.style.display="block"}}
+  catch(e){state.sending=false;fe.textContent="Холболт тасарлаа. Дахин оролдоно уу, эсвэл 8043 4999 дугаарт залгаарай.";fe.style.display="block"}
+  update()}
+
+function go(dir){if(dir>0){if(!canNext())return;if(state.step===4){submit();return}}show(Math.max(1,Math.min(4,state.step+dir)))}
+$("#next").onclick=()=>go(1);$("#back").onclick=()=>go(-1);
+$("#againBtn").onclick=()=>{state.service=null;state.day=null;state.time=null;renderServices();show(1)};
+$("#phone").addEventListener("input",e=>{const v=e.target.value.replace(/\D/g,"").slice(0,8);e.target.value=v.length>4?v.slice(0,4)+" "+v.slice(4):v});
+renderServices();update();
+</script>
+</body>
+</html>
 
